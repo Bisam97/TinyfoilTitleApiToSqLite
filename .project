@@ -1,0 +1,12 @@
+# Gambas Project File 3.0
+Title=TitleDatabaseUpdate
+Startup=Main
+Version=1.0.0
+Component=gb.args
+Component=gb.image
+Component=gb.db
+Component=gb.image.io
+Component=gb.web
+TabSize=2
+Language=en_US
+Packager=1

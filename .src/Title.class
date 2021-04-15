@@ -1,0 +1,93 @@
+' Gambas class file
+
+Private $id As String
+Private $name As String
+Private $publisher As String
+Private $size As String
+Private $release As String
+Private $iconURL As String
+
+Property name As String
+Property Read id As String
+Property publisher As String
+Property Size As String
+Property release As String
+Property icon As String
+
+
+Public Sub _new(id As String, name As String, publisher As String, Size As String, release As String, iconURL As String)
+
+  $id = id
+  $name = name
+  $publisher = publisher
+  $size = Size
+  $release = release
+  $iconURL = iconURL
+
+End
+
+Private Function name_Read() As String
+
+  Return $name
+
+End
+
+Private Sub name_Write(Value As String)
+
+  $name = Value
+
+End
+
+Private Function id_Read() As String
+
+  Return $id
+
+End
+
+Private Function publisher_Read() As String
+
+  Return $publisher
+
+End
+
+Private Sub publisher_Write(Value As String)
+
+  $publisher = Value
+
+End
+
+Private Function Size_Read() As String
+
+  Return $size
+
+End
+
+Private Sub Size_Write(Value As String)
+
+  $size = Value
+
+End
+
+Private Function release_Read() As String
+
+  Return $release
+
+End
+
+Private Sub release_Write(Value As String)
+
+  $release = Value
+
+End
+
+Private Function icon_Read() As String
+
+  Return $iconURL
+
+End
+
+Private Sub icon_Write(Value As String)
+
+  $iconURL = Value
+
+End
