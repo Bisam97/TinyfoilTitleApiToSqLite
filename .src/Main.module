@@ -20,13 +20,23 @@ Private Function CreateTable()
   $con.Type = "sqlite3"
   $con.Host = "/usr/lib/hactoolgui"
   $con.Name = ""
-  $con.Open()
-  $con.Databases.Add("NXTitleDB.sqlite")
-  $con.Close()
-  $con.Name = "NXTitleDB.sqlite"
-  $con.Open()
+
+  If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
+    $con.Name = "NXTitleDB.sqlite"
+    $con.Open()
+    $con.Delete("Title")
+  Else
+
+    $con.Open()
+    $con.Databases.Add("NXTitleDB.sqlite")
+    $con.Close()
+    $con.Name = "NXTitleDB.sqlite"
+    $con.Open()
+
+  Endif
   $con.ApplyTemplate(File.Load("/usr/lib/hactoolgui/NXTitleDB.Template"))
   $con.Close()
+
 
 End
 
@@ -55,7 +65,7 @@ Private Function AddContent()
   Next
 
   $con.Type = "sqlite3"
-  $con.Host = User.Home
+  $con.Host = "/usr/lib/hactoolgui"
   $con.Name = "NXTitleDB.sqlite"
   $con.Open()
 
