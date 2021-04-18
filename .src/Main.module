@@ -8,7 +8,6 @@ Public Sub Main()
   Print "Build Database"
   CreateTable
   AddContent
-  ' test()
   Print
   Print "Fertig"
 
@@ -19,14 +18,14 @@ Private Function CreateTable()
 
   Try $con.Close()
   $con.Type = "sqlite3"
-  $con.Host = User.Home
+  $con.Host = "/usr/lib/hactoolgui"
   $con.Name = ""
   $con.Open()
   $con.Databases.Add("NXTitleDB.sqlite")
   $con.Close()
   $con.Name = "NXTitleDB.sqlite"
   $con.Open()
-  $con.ApplyTemplate(File.Load("/home/bisam97/NXTitleDB.Template"))
+  $con.ApplyTemplate(File.Load("/usr/lib/hactoolgui/NXTitleDB.Template"))
   $con.Close()
 
 End
@@ -108,48 +107,3 @@ Private Function CheckString(s As String) As String
 
 End
 
-' Public Sub Test()
-'
-'   Dim t As Title
-'   Dim C As Collection
-'   Dim cc As Collection
-'
-'
-'   Shell "wget -O - https://tinfoil.media/Title/ApiJson/ > /tmp/tinfoil.json" Wait
-'   Try Kill User.Home &/ "wget-log"
-'   C = JSON.Decode(File.Load("/tmp/tinfoil.json"))
-'
-'
-'   $Titels = New Title[]
-'
-'
-'
-'   For Each cc In C["data"]
-'
-'     t = New Title(CheckString(cc["id"]), CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/256/256" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
-'
-'     $Titels.Add(t)
-'
-'   Next
-'
-'
-'
-'
-'   For Each t In $Titels
-'     If t.name Then
-'       Try Mkdir User.Home &/ "test" &/ t.name
-'       If Error.Code = 38 Then
-'         Error.Clear
-'       Else If Error.Code = 0 Then
-'
-'       Else
-'         Print Error.Text
-'         Print t.name
-'         Print t.id
-'       Endif
-'     Endif
-'   Next
-' Catch
-'
-'
-' End

@@ -1,0 +1,30 @@
+# Gambas Database Template File 3.0
+{ Table
+  Name="Title"
+  PrimaryKey=["id"]
+  { Field
+    Name="id"
+    Type=db.String
+    Length=16
+  }
+  { Field
+    Name="name"
+    Type=db.String
+  }
+  { Field
+    Name="size"
+    Type=db.String
+  }
+  { Field
+    Name="publisher"
+    Type=db.String
+  }
+  { Field
+    Name="release_date"
+    Type=db.Date
+  }
+  { Field
+    Name="icon"
+    Type=db.Blob
+  }
+}
