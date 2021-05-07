@@ -11,7 +11,6 @@ Public Sub Main()
   Print
   Print "Fertig"
 
-
 End
 
 Private Function CreateTable()
@@ -37,7 +36,6 @@ Private Function CreateTable()
   $con.ApplyTemplate(File.Load("/usr/lib/hactoolgui/NXTitleDB.Template"))
   $con.Close()
 
-
 End
 
 Private Function AddContent()
@@ -47,6 +45,7 @@ Private Function AddContent()
   Dim r As Result
   Dim d As String[]
   Dim i As Image
+  Dim f As Integer
 
   Shell "wget -q -O - https://tinfoil.media/Title/ApiJson/ > /tmp/tinfoil.json" Wait
   C = JSON.Decode(File.Load("/tmp/tinfoil.json"))
@@ -54,11 +53,9 @@ Private Function AddContent()
   Print "Please Wait this thake a moment"
   $Titels = New Title[]
 
-
-
   For Each cc In C["data"]
 
-    t = New Title(CheckString(cc["id"]), CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/256/256" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
+    t = New Title(CheckString(cc["id"]), CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/64/64" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
 
     $Titels.Add(t)
 
@@ -71,12 +68,9 @@ Private Function AddContent()
 
   For Each t In $Titels
 
-
     Shell "wget -q -O - " & t.icon & " > /tmp/icon.tmp" Wait
 
-
     d = Split(t.release, "-")
-
 
     r = $con.Create("Title")
     r["id"] = t.id
@@ -99,10 +93,8 @@ Private Function AddContent()
       Error.Clear
 
     Endif
-
-
-    Write #File.Out, "."
-    Flush #File.Out
+    f += 1
+    perzent(f, t)
 
   Next
 
@@ -117,3 +109,25 @@ Private Function CheckString(s As String) As String
 
 End
 
+Private Function perzent(i As Integer, t As Title)
+
+  Dim ii As Integer
+  Dim iii As Integer
+
+  iii = CInt(i / $Titels.Count * 100)
+
+  ' Print t.name & " fertig!"
+  Write #File.Out, iii & "%["
+  While iii > ii
+    Write #File.Out, "#"
+    ii += 1
+
+  Wend
+  While ii < 100
+    Write #File.out, " "
+    ii += 1
+  Wend
+  Write #File.Out, "] (" & i & "/" & $Titels.Count & ")\r"
+  Flush #File.Out
+
+End

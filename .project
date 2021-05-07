@@ -1,7 +1,7 @@
 # Gambas Project File 3.0
 Title=TitleDatabaseUpdate
 Startup=Main
-Version=1.0.2
+Version=1.1.5
 Component=gb.args
 Component=gb.image
 Component=gb.db
@@ -12,7 +12,7 @@ Language=en_US
 Maintainer=bisam97
 Address=bisam97@bisam97.de
 License=General Public License
-PackageName=tinyfoiltitleapitosqlite-1.0.2
+PackageName=tinyfoiltitleapitosqlite-1.1.5
 RuntimeVersion="3.15"
 Packager=1
 Systems=ubuntu
