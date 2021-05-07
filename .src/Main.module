@@ -2,12 +2,18 @@
 
 Private $con As New Connection
 Private $Titels As Title[]
+Private $f As Integer
 
 Public Sub Main()
 
-  Print "Build Database"
-  CreateTable
-  AddContent
+  If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
+    Print "Update Database"
+    updateDatabase()
+  Else
+    Print "Build Database"
+    CreateTable()
+    Print
+  Endif
   Print
   Print "Fertig"
 
@@ -15,44 +21,57 @@ End
 
 Private Function CreateTable()
 
+  Dim t As Title
+
   Try $con.Close()
   $con.Type = "sqlite3"
   $con.Host = "/usr/lib/hactoolgui"
   $con.Name = ""
 
-  If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
-    $con.Name = "NXTitleDB.sqlite"
-    $con.Open()
-    $con.Delete("Title")
-  Else
+  ' If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
+  '   $con.Name = "NXTitleDB.sqlite"
+  '   $con.Open()
+  '   $con.Delete("Title")
+  ' Else
 
-    $con.Open()
-    $con.Databases.Add("NXTitleDB.sqlite")
-    $con.Close()
-    $con.Name = "NXTitleDB.sqlite"
-    $con.Open()
+  $con.Open()
+  $con.Databases.Add("NXTitleDB.sqlite")
+  $con.Close()
+  $con.Name = "NXTitleDB.sqlite"
+  $con.Open()
 
-  Endif
+  ' Endif
   $con.ApplyTemplate(File.Load("/usr/lib/hactoolgui/NXTitleDB.Template"))
   $con.Close()
 
+  ''---------------------------------NEW-------------------------------------------
+
+  getApiJsonandConvert()
+
+  Print "Please Wait this thake a moment"
+  $con.Type = "sqlite3"
+  $con.Host = "/usr/lib/hactoolgui"
+  $con.Name = "NXTitleDB.sqlite"
+  $con.Open()
+
+  For Each t In $Titels
+    AddContent(t)
+  Next
+
 End
 
-Private Function AddContent()
+Private Function getApiJsonandConvert()
 
   Dim C, cc As Collection
   Dim t As Title
-  Dim r As Result
-  Dim d As String[]
-  Dim i As Image
-  Dim f As Integer
+
+  Print "Get JSON API"
 
   Shell "wget -q -O - https://tinfoil.media/Title/ApiJson/ > /tmp/tinfoil.json" Wait
   C = JSON.Decode(File.Load("/tmp/tinfoil.json"))
 
-  Print "Please Wait this thake a moment"
   $Titels = New Title[]
-
+  Print "Parsing JSON"
   For Each cc In C["data"]
 
     t = New Title(CheckString(cc["id"]), CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/64/64" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
@@ -61,6 +80,19 @@ Private Function AddContent()
 
   Next
 
+End
+
+Private Function updateDatabase()
+
+  Dim sql As SQLRequest
+  Dim t As Title
+  Dim r As Result
+  Dim s As String
+
+  getApiJsonandConvert
+  Print "Update Database"
+  Print "Please Wait this thake a moment"
+
   $con.Type = "sqlite3"
   $con.Host = "/usr/lib/hactoolgui"
   $con.Name = "NXTitleDB.sqlite"
@@ -68,35 +100,57 @@ Private Function AddContent()
 
   For Each t In $Titels
 
-    Shell "wget -q -O - " & t.icon & " > /tmp/icon.tmp" Wait
+    sql = New SQLRequest($con)
+    s = sql.Select("id").From("Title").Where("id = &1", t.id).Get()
 
-    d = Split(t.release, "-")
+    r = $con.Exec(s)
 
-    r = $con.Create("Title")
-    r["id"] = t.id
-    Try i = Image.Load("/tmp/icon.tmp")
+    If r.Count = 0 Then
 
-    If Error Then
-    Else
-      i.Save("/tmp/icon.png")
-      r["icon"] = File.Load("/tmp/icon.png")
-    Endif
-
-    Try r["name"] = t.name
-    Try r["publisher"] = t.publisher
-    Try r["release_date"] = Date(d[0], d[1], d[2])
-    Try r["size"] = t.Size
-    Try r.Update()
-    If Error Then
-
-      Print #File.Err, "Error with ID" & t.id
-      Error.Clear
+      AddContent(t)
 
     Endif
-    f += 1
-    perzent(f, t)
+
+    $f += 1
+    perzent($f, t)
 
   Next
+
+End
+
+Private Function AddContent(t As Title)
+
+  Dim r As Result
+  Dim d As String[]
+  Dim i As Image
+
+  Shell "wget -q -O - " & t.icon & " > /tmp/icon.tmp" Wait
+
+  d = Split(t.release, "-")
+
+  r = $con.Create("Title")
+  r["id"] = t.id
+  Try i = Image.Load("/tmp/icon.tmp")
+
+  If Error Then
+  Else
+    i.Save("/tmp/icon.png")
+    r["icon"] = File.Load("/tmp/icon.png")
+  Endif
+
+  Try r["name"] = t.name
+  Try r["publisher"] = t.publisher
+  Try r["release_date"] = Date(d[0], d[1], d[2])
+  Try r["size"] = t.Size
+  Try r.Update()
+  If Error Then
+
+    Print #File.Err, "Error with ID" & t.id
+    Error.Clear
+
+  Endif
+  $f += 1
+  perzent($f, t)
 
 End
 
