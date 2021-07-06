@@ -104,7 +104,7 @@ Private Function updateDatabase()
     sql = New SQLRequest($con)
     ' s = sql.Where("id = &1", t.id).Get()
 
-    r = $con.Edit("Title", "Where id = " & t.id)
+    r = $con.Edit("Title", "Where id = '" & t.id & "'")
 
     If r.Count = 0 Then
 
