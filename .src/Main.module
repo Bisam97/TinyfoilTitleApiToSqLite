@@ -112,6 +112,7 @@ Private Function updateDatabase()
 
     Else
       r["name"] = t.name
+      r.Update()
     Endif
 
     $f += 1
@@ -176,6 +177,7 @@ Private Function CheckString(s As String) As String
     sc = s[String.InStr(s, ";"), s.Len]
     s = s[0, String.InStr(s, "&#") - 1] & String.Chr(i) & sc
   Endif
+  Return s
 
 End
 
