@@ -7,7 +7,7 @@ Private $f As Integer
 Public Sub Main()
 
   If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
-    Print "Update Database"
+    Print "Update Database\nUpdate Game Names"
     updateDatabase()
   Else
     Print "Build Database"
@@ -26,6 +26,7 @@ Private Function CreateTable()
   Try $con.Close()
   $con.Type = "sqlite3"
   $con.Host = "/usr/lib/hactoolgui"
+  ' $con.Host = "/home/bisam97"
   $con.Name = ""
 
   ' If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
@@ -74,7 +75,7 @@ Private Function getApiJsonandConvert()
   Print "Parsing JSON"
   For Each cc In C["data"]
 
-    t = New Title(CheckString(cc["id"]), CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/64/64" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
+    t = New Title(cc["id"], CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/64/64" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
 
     $Titels.Add(t)
 
@@ -109,6 +110,8 @@ Private Function updateDatabase()
 
       AddContent(t)
 
+    Else
+      r["name"] = t.name
     Endif
 
     $f += 1
@@ -157,9 +160,18 @@ End
 Private Function CheckString(s As String) As String
 
   Dim sa As String[]
+  Dim sb As String
+  Dim sc As String
+  Dim sd As Integer
 
-  sa = Split(s, "/.,'#?!-:;<>™+[]´`^°~*&()“–’®�")
-  Return sa.Join("_")
+  sa = Split(s, "/.,'?!-:<>™+[]´`^°~*()“–’®�")
+  s = sa.Join("_")
+  sb = s[0, String.InStr(s, "&#")]
+  If sb Then
+    sd = CInt(s[String.InStr(s, "&#") + 1, String.InStr(s, ";") - String.InStr(s, "&#") - 2])
+    sc = s[String.InStr(s, ";"), s.Len]
+    s = s[0, String.InStr(s, "&#") - 1] & String.Chr(sd) & sc
+  Endif
 
 End
 
