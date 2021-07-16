@@ -3,9 +3,11 @@
 Private $con As New Connection
 Private $Titels As Title[]
 Private $f As Integer
+' Private $a As Collection
 
 Public Sub Main()
 
+  ' $a = New Collection
   If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
     Print "Update Database\nUpdate Game Names"
     updateDatabase()
@@ -80,6 +82,7 @@ Private Function getApiJsonandConvert()
     $Titels.Add(t)
 
   Next
+  saveFile
 
 End
 
@@ -165,19 +168,36 @@ Private Function CheckString(s As String) As String
   Dim sc As String
   Dim sd As String
   Dim i As Integer
+  Dim c As Integer
 
   sa = Split(s, "/.,'?!-:<>™+[]´`^°~*()“–’®��〇")
   s = sa.Join("_")
+
+  ''Convert HTML Entries to UTF8 Chars
   sb = s[0, String.InStr(s, "&#")]
-  If sb Then
-    sd = s[String.InStr(s, "&#") + 1, String.InStr(s, ";", String.InStr(s, "&#")) - String.InStr(s, "&#") - 2]
+
+  While s[0, String.InStr(s, "&#")]
+
+    sd = s[String.InStr(s, "&#") + 1 + c, String.InStr(s, ";", String.InStr(s, "&#")) - String.InStr(s, "&#") - 2]
     ' Print sd
     i = CInt(sd)
 
-    sc = s[String.InStr(s, ";"), s.Len]
+    ' $a.Add([String.InStr(s, "&#"), s[String.InStr(s, "&#")]], s)
+
+    sc = s[String.InStr(s, sd & ";") + sd.Len, s.Len]
     s = s[0, String.InStr(s, "&#") - 1] & String.Chr(i) & sc
-  Endif
+    sb = s[0, String.InStr(s, "&#")]
+    If String.Chr(i).Len = 2 Then c += 1
+
+  Wend
+
   Return s
+Catch
+  Print Error.Text
+  Print Error.Where
+  Print s
+  Print sd
+  Quit 1
 
 End
 
@@ -201,5 +221,11 @@ Private Function perzent(i As Integer, t As Title)
   Wend
   Write #File.Out, "] (" & i & "/" & $Titels.Count & ")\r"
   Flush #File.Out
+
+End
+
+Public Sub saveFile()
+
+  ' File.Save("/tmp/test.txt", JSON.Encode($a))
 
 End
