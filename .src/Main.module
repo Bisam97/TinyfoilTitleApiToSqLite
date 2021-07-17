@@ -9,6 +9,7 @@ Public Sub Main()
 
   ' $a = New Collection
   If Exist("/usr/lib/hactoolgui/NXTitleDB.sqlite") Then
+    ' If Exist("/home/bisam97/NXTitleDB.sqlite") Then
     Print "Update Database\nUpdate Game Names"
     updateDatabase()
   Else
@@ -99,6 +100,7 @@ Private Function updateDatabase()
 
   $con.Type = "sqlite3"
   $con.Host = "/usr/lib/hactoolgui"
+  ' $con.Host = "/home/bisam97"
   $con.Name = "NXTitleDB.sqlite"
   $con.Open()
 
@@ -184,8 +186,8 @@ Private Function CheckString(s As String) As String
 
     ' $a.Add([String.InStr(s, "&#"), s[String.InStr(s, "&#")]], s)
 
-    sc = s[String.InStr(s, sd & ";") + sd.Len, s.Len]
-    s = s[0, String.InStr(s, "&#") - 1] & String.Chr(i) & sc
+    sc = s[String.InStr(s, sd & ";") + sd.Len + c, s.Len]
+    s = s[0, String.InStr(s, "&#") - 1 + c] & String.Chr(i) & sc
     sb = s[0, String.InStr(s, "&#")]
     If String.Chr(i).Len = 2 Then c += 1
 
