@@ -78,7 +78,7 @@ Private Function getApiJsonandConvert()
   Print "Parsing JSON"
   For Each cc In C["data"]
 
-    t = New Title(cc["id"], CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/i/" & cc["id"] & "/64/64" & String.Mid$(cc["icon"], String.InStr(cc["icon"], "(") + 1 + String.Len("https://tinfoil.media/i/") + 16 + 6, -9))
+    t = New Title(cc["id"], CheckString(String.Mid$(cc["name"], String.InStr(cc["name"], ">") + 1, -4)), CheckString(cc["publisher"]), cc["size"], cc["release_date"], "https://tinfoil.media/ti/" & cc["id"] & "/128/128/")
 
     $Titels.Add(t)
 
